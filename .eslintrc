@@ -1,0 +1,11 @@
+{
+  "rules": {},
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "envs": ["browser", "es6", ""]
+}

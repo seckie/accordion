@@ -1,0 +1,33 @@
+{
+  "name": "accordion",
+  "version": "0.1.0",
+  "main": "dist/accordion.js",
+  "description": "HTML5 accordion UI component",
+  "scripts": {
+    "prepublish": "gulp dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seckie/accordion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seckie/accordion/issues"
+  },
+  "homepage": "https://github.com/seckie/accordion",
+  "author": "seckie",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-es2015-modules-umd": "^6.18.0",
+    "browser-sync": "^2.18.6",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-exclude-gitignore": "^1.1.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-webpack": "^1.5.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  }
+}

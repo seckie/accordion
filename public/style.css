@@ -1,0 +1,22 @@
+@charset "UTF-8";
+* {
+  margin: 0;
+  padding: 0;
+}
+.component {
+  position: relative;
+  overflow: hidden;
+}
+.component__label {
+  padding: .25em 20px;
+  background-color: #eee;
+  border-bottom: 1px solid #ccc;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.js .component__body {
+  position: absolute;
+  left: -150%;
+  transition: height .5s ease-in-out;
+}
