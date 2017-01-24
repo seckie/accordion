@@ -70,10 +70,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	var errorMessage = 'This module depends on browser DOM. You can\'t use this without browser.';
+
 	var Accordion = function () {
-	  function Accordion(props) {
+	  function Accordion() {
+	    var props = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 	    _classCallCheck(this, Accordion);
 
+	    if (typeof window === 'undefined' || typeof document === 'undefined') {
+	      throw new Error(errorMessage);
+	    }
 	    // props
 	    this.filter = props.filter || function () {
 	      return true;

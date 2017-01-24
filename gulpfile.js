@@ -8,6 +8,7 @@ var eslint = require('gulp-eslint');
 var excludeGitignore = require('gulp-exclude-gitignore');
 var mocha = require('gulp-mocha');
 var path = require('path');
+var karmaServer = require('karma').Server;
 require('babel-core/register');
 
 var PUBLIC_PATH = './public/';
@@ -64,12 +65,15 @@ gulp.task('eslint', function () {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', function () {
-  return gulp.src(PATHS.es6Test, {read: false})
-    .pipe(mocha({
-      reporter: 'spec'
-    }))
-    .on('error', errorHandler);
+gulp.task('test', function (done) {
+  //return gulp.src(PATHS.es6Test, {read: false})
+  //  .pipe(mocha({
+  //    reporter: 'spec'
+  //  }))
+  //  .on('error', errorHandler);
+  new karmaServer({
+    configFile: path.join(__dirname, 'karma.conf.js')
+  }, done).start();
 });
 
 gulp.task('default', function () {
