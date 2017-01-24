@@ -6,7 +6,9 @@ var browserSync = require('browser-sync');
 var notify = require('gulp-notify');
 var eslint = require('gulp-eslint');
 var excludeGitignore = require('gulp-exclude-gitignore');
+var mocha = require('gulp-mocha');
 var path = require('path');
+require('babel-core/register');
 
 var PUBLIC_PATH = './public/';
 var DIST_FILENAME = 'accordion.js';
@@ -16,6 +18,7 @@ var PATHS = {
 
   es6: [ 'src/js/**/*.js' ],
   es6Main: path.join('src/js', DIST_FILENAME),
+  es6Test: [ 'src/js/test/**/*.js' ],
   js: [path.join(PUBLIC_PATH, '**/*.js')],
   jsDir: PUBLIC_PATH,
   distDir: './dist',
@@ -61,6 +64,14 @@ gulp.task('eslint', function () {
     .pipe(eslint.failAfterError());
 });
 
+gulp.task('test', function () {
+  return gulp.src(PATHS.es6Test, {read: false})
+    .pipe(mocha({
+      reporter: 'spec'
+    }))
+    .on('error', errorHandler);
+});
+
 gulp.task('default', function () {
   browserSync.init({
     open: false,
@@ -80,5 +91,6 @@ gulp.task('default', function () {
       ]
     }
   });
-  gulp.watch(PATHS.es6, ['build', 'dist', 'eslint']);
+  gulp.watch(PATHS.es6, ['test', 'build', 'dist', 'eslint']);
+  gulp.watch(PATHS.es6Test, ['test']);
 });

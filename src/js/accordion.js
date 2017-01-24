@@ -1,9 +1,15 @@
 'use strict';
 import debounce from 'lodash/debounce';
 
+const errorMessage = 'This module depends on browser DOM. You can\'t use this without browser.';
+
 class Accordion {
 
-  constructor (props) {
+  constructor (props = {}) {
+    if (typeof window === 'undefined' ||
+      typeof document === 'undefined') {
+      throw new Error(errorMessage);
+    }
     // props
     this.filter = props.filter || function () {return true;};
     this.bodiesSelector = props.bodiesSelector;
