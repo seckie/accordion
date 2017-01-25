@@ -16,14 +16,14 @@ class Accordion {
     this.headersSelector = props.headersSelector;
     this.sectionsSelector = props.sectionsSelector;
     this.openClassName = props.openClassName;
-    this.resizeHandler = props.onResize || debounce(this._resizeHandler.bind(this), 250);
+    this.resizeHandler = props.onResize || debounce(this._update.bind(this), 250);
     // data
     this.clickListeners = [];
     this.currentWidth = window.innerWidth;
     // exec
     this._initStyle();
     window.addEventListener('resize', this.resizeHandler, false);
-    setTimeout(this.resizeHandler.bind(this), 50);
+    setTimeout(this._update.bind(this), 50);
   }
 
   destroy () {
@@ -54,7 +54,7 @@ class Accordion {
     this.$bodies = $bodies;
   }
 
-  _resizeHandler () {
+  _update () {
     if (this.clickListeners[0] && this.currentWidth === window.innerWidth) {
       return;
     }
@@ -63,7 +63,7 @@ class Accordion {
     if (!this.filter()) {
       if (this.clickListeners[0]) {
         const $bodies = document.querySelectorAll(this.bodiesSelector);
-        const $headers= document.querySelectorAll(this.headersSelector);
+        const $headers = document.querySelectorAll(this.headersSelector);
         for (let i=0, l=$bodies.length; i<l; i++) {
           $bodies[i].style.height = '';
           $bodies[i].style.position = '';
@@ -79,7 +79,7 @@ class Accordion {
     const $sections = document.querySelectorAll(this.sectionsSelector);
     if ($sections[0]) {
       const $bodies = document.querySelectorAll(this.bodiesSelector);
-      const $headers= document.querySelectorAll(this.headersSelector);
+      const $headers = document.querySelectorAll(this.headersSelector);
       for (let i=0, l=$sections.length; i<l; i++) {
         const $section = $sections[i];
         const $header = $headers[i];

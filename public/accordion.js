@@ -91,14 +91,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.headersSelector = props.headersSelector;
 	    this.sectionsSelector = props.sectionsSelector;
 	    this.openClassName = props.openClassName;
-	    this.resizeHandler = props.onResize || (0, _debounce2.default)(this._resizeHandler.bind(this), 250);
+	    this.resizeHandler = props.onResize || (0, _debounce2.default)(this._update.bind(this), 250);
 	    // data
 	    this.clickListeners = [];
 	    this.currentWidth = window.innerWidth;
 	    // exec
 	    this._initStyle();
 	    window.addEventListener('resize', this.resizeHandler, false);
-	    setTimeout(this.resizeHandler.bind(this), 50);
+	    setTimeout(this._update.bind(this), 50);
 	  }
 
 	  _createClass(Accordion, [{
@@ -132,8 +132,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.$bodies = $bodies;
 	    }
 	  }, {
-	    key: '_resizeHandler',
-	    value: function _resizeHandler() {
+	    key: '_update',
+	    value: function _update() {
 	      var _this = this;
 
 	      if (this.clickListeners[0] && this.currentWidth === window.innerWidth) {
