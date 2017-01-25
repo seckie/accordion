@@ -60,6 +60,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _debounce = __webpack_require__(1);
@@ -89,18 +91,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.headersSelector = props.headersSelector;
 	    this.sectionsSelector = props.sectionsSelector;
 	    this.openClassName = props.openClassName;
+	    this.resizeHandler = props.onResize || (0, _debounce2.default)(this._resizeHandler.bind(this), 250);
 	    // data
 	    this.clickListeners = [];
 	    this.currentWidth = window.innerWidth;
-	    // functions
-	    this.resizeHandler = (0, _debounce2.default)(this._resizeHandler.bind(this), 250);
 	    // exec
 	    this._initStyle();
 	    window.addEventListener('resize', this.resizeHandler, false);
-	    setTimeout(this._resizeHandler.bind(this), 50);
+	    setTimeout(this.resizeHandler.bind(this), 50);
 	  }
 
 	  _createClass(Accordion, [{
+	    key: 'destroy',
+	    value: function destroy() {
+	      window.removeEventListener('resize', this.resizeHandler, false);
+	      if (_typeof(this.$headers) === 'object' && this.$headers.length) {
+	        for (var i = 0, l = this.$headers.length; i < l; i++) {
+	          this.$headers[i].removeEventListener('click', this.clickListeners[i], false);
+	        }
+	      }
+	    }
+	  }, {
 	    key: '_initStyle',
 	    value: function _initStyle() {
 	      var $sections = document.querySelectorAll(this.sectionsSelector);
@@ -117,6 +128,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        $body.style.left = '-150%';
 	        $body.style.transition = 'height 0.5s ease-in-out';
 	      }
+	      this.$sections = $sections;
+	      this.$bodies = $bodies;
 	    }
 	  }, {
 	    key: '_resizeHandler',
@@ -138,6 +151,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            $bodies[i].style.left = '';
 	            $headers[i].removeEventListener('click', this.clickListeners[i], false);
 	          }
+	          this.$bodies = $bodies;
+	          this.$headers = $headers;
 	        }
 	        return;
 	      }
@@ -178,6 +193,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            $section.classList.remove(_this.openClassName);
 	            $header.addEventListener('click', _this.clickListeners[_i2], false);
 	          }
+
+	          _this.$sections = $sections;
+	          _this.$bodies = $bodies;
+	          _this.$headers = $headers;
 	        })();
 	      }
 	    }

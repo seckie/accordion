@@ -16,15 +16,23 @@ class Accordion {
     this.headersSelector = props.headersSelector;
     this.sectionsSelector = props.sectionsSelector;
     this.openClassName = props.openClassName;
+    this.resizeHandler = props.onResize || debounce(this._resizeHandler.bind(this), 250);
     // data
     this.clickListeners = [];
     this.currentWidth = window.innerWidth;
-    // functions
-    this.resizeHandler = debounce(this._resizeHandler.bind(this), 250);
     // exec
     this._initStyle();
     window.addEventListener('resize', this.resizeHandler, false);
-    setTimeout(this._resizeHandler.bind(this), 50);
+    setTimeout(this.resizeHandler.bind(this), 50);
+  }
+
+  destroy () {
+    window.removeEventListener('resize', this.resizeHandler, false);
+    if (typeof this.$headers === 'object' && this.$headers.length) {
+      for (let i=0,l=this.$headers.length; i<l; i++) {
+        this.$headers[i].removeEventListener('click', this.clickListeners[i], false);
+      }
+    }
   }
 
   _initStyle () {
@@ -42,6 +50,8 @@ class Accordion {
       $body.style.left = '-150%';
       $body.style.transition = 'height 0.5s ease-in-out';
     }
+    this.$sections = $sections;
+    this.$bodies = $bodies;
   }
 
   _resizeHandler () {
@@ -60,6 +70,8 @@ class Accordion {
           $bodies[i].style.left = '';
           $headers[i].removeEventListener('click', this.clickListeners[i], false);
         }
+        this.$bodies = $bodies;
+        this.$headers = $headers;
       }
       return;
     }
@@ -99,6 +111,10 @@ class Accordion {
         $section.classList.remove(this.openClassName);
         $header.addEventListener('click', this.clickListeners[i], false);
       }
+
+      this.$sections = $sections;
+      this.$bodies = $bodies;
+      this.$headers = $headers;
     }
   }
 
