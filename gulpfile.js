@@ -6,7 +6,6 @@ var browserSync = require('browser-sync');
 var notify = require('gulp-notify');
 var eslint = require('gulp-eslint');
 var excludeGitignore = require('gulp-exclude-gitignore');
-var mocha = require('gulp-mocha');
 var path = require('path');
 var karmaServer = require('karma').Server;
 require('babel-core/register');
@@ -23,7 +22,7 @@ var PATHS = {
   js: [path.join(PUBLIC_PATH, '**/*.js')],
   jsDir: PUBLIC_PATH,
   jsAll: ['**/*.js'],
-  jsToLint: ['*.js', 'src/**/*.js', './dist/**/*.js'],
+  jsToLint: ['*.js', 'src/**/*.js'],
   distDir: './dist',
 
   css: [path.join(PUBLIC_PATH, '**/*.css')],
@@ -81,6 +80,7 @@ gulp.task('default', function (done) {
            * @param next
            */
           var msg = req.method + ' ' + req.url;
+          /* eslint-disable no-console */
           console.log(msg);
           next();
         }
