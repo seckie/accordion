@@ -22,6 +22,8 @@ var PATHS = {
   es6Test: [ 'src/js/test/**/*.js' ],
   js: [path.join(PUBLIC_PATH, '**/*.js')],
   jsDir: PUBLIC_PATH,
+  jsAll: ['**/*.js'],
+  jsToLint: ['*.js', 'src/**/*.js', './dist/**/*.js'],
   distDir: './dist',
 
   css: [path.join(PUBLIC_PATH, '**/*.css')],
@@ -58,25 +60,15 @@ gulp.task('dist', function () {
 });
 
 gulp.task('eslint', function () {
-  return gulp.src('**/*.js')
+  return gulp.src(PATHS.jsToLint)
     .pipe(excludeGitignore())
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', function (done) {
-  //return gulp.src(PATHS.es6Test, {read: false})
-  //  .pipe(mocha({
-  //    reporter: 'spec'
-  //  }))
-  //  .on('error', errorHandler);
-  new karmaServer({
-    configFile: path.join(__dirname, 'karma.conf.js')
-  }, done).start();
-});
-
-gulp.task('default', function () {
+gulp.task('default', function (done) {
+  // local server
   browserSync.init({
     open: false,
     server: {
@@ -94,7 +86,12 @@ gulp.task('default', function () {
         }
       ]
     }
-  });
-  gulp.watch(PATHS.es6, ['test', 'build', 'dist', 'eslint']);
-  gulp.watch(PATHS.es6Test, ['test']);
+  }, done);
+  // watch
+  gulp.watch(PATHS.es6, ['build', 'dist']);
+  gulp.watch(PATHS.jsAll, ['eslint']);
+  // test
+  new karmaServer({
+    configFile: path.join(__dirname, 'karma.conf.js')
+  }).start();
 });
