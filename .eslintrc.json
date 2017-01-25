@@ -11,6 +11,9 @@
     "sourceType": "module",
     "ecmaVersion": 6
   },
+  "globals": {
+    "__html__": true
+  },
   "rules": {
     "indent": [
       "error",
