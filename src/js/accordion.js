@@ -19,9 +19,29 @@ class Accordion {
     // data
     this.clickListeners = [];
     this.currentWidth = window.innerWidth;
+    // functions
+    this.resizeHandler = debounce(this._resizeHandler.bind(this), 250);
+    // exec
+    this._initStyle();
+    window.addEventListener('resize', this.resizeHandler, false);
+    setTimeout(this._resizeHandler.bind(this), 50);
+  }
 
-    window.addEventListener("resize", debounce(this._resizeHandler.bind(this), 250));
-    this._resizeHandler();
+  _initStyle () {
+    const $sections = document.querySelectorAll(this.sectionsSelector);
+    const $bodies = document.querySelectorAll(this.bodiesSelector);
+    for (let i=0, l=$sections.length; i<l; i++) {
+      const $section = $sections[i];
+      $section.style.position = 'relative';
+      $section.style.overflow = 'hidden';
+    }
+    for (let i=0, l=$bodies.length; i<l; i++) {
+      const $body = $bodies[i];
+      $body.style.position = 'absolute';
+      $body.style.width = '100%';
+      $body.style.left = '-150%';
+      $body.style.transition = 'height 0.5s ease-in-out';
+    }
   }
 
   _resizeHandler () {
@@ -35,10 +55,10 @@ class Accordion {
         const $bodies = document.querySelectorAll(this.bodiesSelector);
         const $headers= document.querySelectorAll(this.headersSelector);
         for (let i=0, l=$bodies.length; i<l; i++) {
-          $bodies[i].style.height = "";
-          $bodies[i].style.position = "";
-          $bodies[i].style.left = "";
-          $headers[i].removeEventListener("click", this.clickListeners[i], false);
+          $bodies[i].style.height = '';
+          $bodies[i].style.position = '';
+          $bodies[i].style.left = '';
+          $headers[i].removeEventListener('click', this.clickListeners[i], false);
         }
       }
       return;
@@ -49,20 +69,20 @@ class Accordion {
       const $bodies = document.querySelectorAll(this.bodiesSelector);
       const $headers= document.querySelectorAll(this.headersSelector);
       for (let i=0, l=$sections.length; i<l; i++) {
-        $bodies[i].style.height = "";
-        $bodies[i].style.position = "";
-        $bodies[i].style.left = "";
-        let $el = $sections[i];
-        let $header = $headers[i];
-        let $body = $bodies[i];
+        const $section = $sections[i];
+        const $header = $headers[i];
+        const $body = $bodies[i];
+        $body.style.height = '';
+        $body.style.position = '';
+        $body.style.left = '';
         if (this.clickListeners[i]) {
-          $header.removeEventListener("click", this.clickListeners[i], false);
+          $header.removeEventListener('click', this.clickListeners[i], false);
         }
         this.clickListeners[i] = (e) => {
           const el = e.currentTarget;
           const key = +el.dataset.key;
           if (parseInt($bodies[key].style.height, 10) == 0) {
-            $bodies[key].style.height = el.dataset.targetHeight + "px";
+            $bodies[key].style.height = el.dataset.targetHeight + 'px';
             $sections[key].classList.add(this.openClassName);
           } else {
             $bodies[key].style.height = 0;
@@ -74,10 +94,10 @@ class Accordion {
         $header.dataset.key = i;
         $header.dataset.targetHeight = $body.clientHeight ? $body.clientHeight : 0;
         $body.style.height = 0;
-        $body.style.position = "static";
+        $body.style.position = 'static';
         $body.style.left = 0;
-        $sections[i].classList.remove(this.openClassName);
-        $header.addEventListener("click", this.clickListeners[i], false);
+        $section.classList.remove(this.openClassName);
+        $header.addEventListener('click', this.clickListeners[i], false);
       }
     }
   }

@@ -92,12 +92,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // data
 	    this.clickListeners = [];
 	    this.currentWidth = window.innerWidth;
-
-	    window.addEventListener("resize", (0, _debounce2.default)(this._resizeHandler.bind(this), 250));
-	    this._resizeHandler();
+	    // functions
+	    this.resizeHandler = (0, _debounce2.default)(this._resizeHandler.bind(this), 250);
+	    // exec
+	    this._initStyle();
+	    window.addEventListener('resize', this.resizeHandler, false);
+	    setTimeout(this._resizeHandler.bind(this), 50);
 	  }
 
 	  _createClass(Accordion, [{
+	    key: '_initStyle',
+	    value: function _initStyle() {
+	      var $sections = document.querySelectorAll(this.sectionsSelector);
+	      var $bodies = document.querySelectorAll(this.bodiesSelector);
+	      for (var i = 0, l = $sections.length; i < l; i++) {
+	        var $section = $sections[i];
+	        $section.style.position = 'relative';
+	        $section.style.overflow = 'hidden';
+	      }
+	      for (var _i = 0, _l = $bodies.length; _i < _l; _i++) {
+	        var $body = $bodies[_i];
+	        $body.style.position = 'absolute';
+	        $body.style.width = '100%';
+	        $body.style.left = '-150%';
+	        $body.style.transition = 'height 0.5s ease-in-out';
+	      }
+	    }
+	  }, {
 	    key: '_resizeHandler',
 	    value: function _resizeHandler() {
 	      var _this = this;
@@ -112,10 +133,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          var $bodies = document.querySelectorAll(this.bodiesSelector);
 	          var $headers = document.querySelectorAll(this.headersSelector);
 	          for (var i = 0, l = $bodies.length; i < l; i++) {
-	            $bodies[i].style.height = "";
-	            $bodies[i].style.position = "";
-	            $bodies[i].style.left = "";
-	            $headers[i].removeEventListener("click", this.clickListeners[i], false);
+	            $bodies[i].style.height = '';
+	            $bodies[i].style.position = '';
+	            $bodies[i].style.left = '';
+	            $headers[i].removeEventListener('click', this.clickListeners[i], false);
 	          }
 	        }
 	        return;
@@ -126,36 +147,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	        (function () {
 	          var $bodies = document.querySelectorAll(_this.bodiesSelector);
 	          var $headers = document.querySelectorAll(_this.headersSelector);
-	          for (var _i = 0, _l = $sections.length; _i < _l; _i++) {
-	            $bodies[_i].style.height = "";
-	            $bodies[_i].style.position = "";
-	            $bodies[_i].style.left = "";
-	            var $el = $sections[_i];
-	            var $header = $headers[_i];
-	            var $body = $bodies[_i];
-	            if (_this.clickListeners[_i]) {
-	              $header.removeEventListener("click", _this.clickListeners[_i], false);
+	          for (var _i2 = 0, _l2 = $sections.length; _i2 < _l2; _i2++) {
+	            var $section = $sections[_i2];
+	            var $header = $headers[_i2];
+	            var $body = $bodies[_i2];
+	            $body.style.height = '';
+	            $body.style.position = '';
+	            $body.style.left = '';
+	            if (_this.clickListeners[_i2]) {
+	              $header.removeEventListener('click', _this.clickListeners[_i2], false);
 	            }
-	            _this.clickListeners[_i] = function (e) {
+	            _this.clickListeners[_i2] = function (e) {
 	              var el = e.currentTarget;
 	              var key = +el.dataset.key;
 	              if (parseInt($bodies[key].style.height, 10) == 0) {
-	                $bodies[key].style.height = el.dataset.targetHeight + "px";
+	                $bodies[key].style.height = el.dataset.targetHeight + 'px';
 	                $sections[key].classList.add(_this.openClassName);
 	              } else {
 	                $bodies[key].style.height = 0;
 	                $sections[key].classList.remove(_this.openClassName);
 	              }
 	            };
-	            _this.clickListeners[_i] = _this.clickListeners[_i].bind(_this);
+	            _this.clickListeners[_i2] = _this.clickListeners[_i2].bind(_this);
 
-	            $header.dataset.key = _i;
+	            $header.dataset.key = _i2;
 	            $header.dataset.targetHeight = $body.clientHeight ? $body.clientHeight : 0;
 	            $body.style.height = 0;
-	            $body.style.position = "static";
+	            $body.style.position = 'static';
 	            $body.style.left = 0;
-	            $sections[_i].classList.remove(_this.openClassName);
-	            $header.addEventListener("click", _this.clickListeners[_i], false);
+	            $section.classList.remove(_this.openClassName);
+	            $header.addEventListener('click', _this.clickListeners[_i2], false);
 	          }
 	        })();
 	      }
