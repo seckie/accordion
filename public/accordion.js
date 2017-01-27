@@ -60,8 +60,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _debounce = __webpack_require__(1);
@@ -96,7 +94,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.clickListeners = [];
 	    this.currentWidth = window.innerWidth;
 	    // exec
-	    this._initStyle();
+	    this._init();
 	    window.addEventListener('resize', this.resizeHandler, false);
 	    setTimeout(this._update.bind(this), 50);
 	  }
@@ -104,25 +102,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createClass(Accordion, [{
 	    key: 'destroy',
 	    value: function destroy() {
+	      this._reset();
 	      window.removeEventListener('resize', this.resizeHandler, false);
-	      if (_typeof(this.$headers) === 'object' && this.$headers.length) {
-	        for (var i = 0, l = this.$headers.length; i < l; i++) {
-	          this.$headers[i].removeEventListener('click', this.clickListeners[i], false);
-	        }
-	      }
 	    }
 	  }, {
-	    key: '_initStyle',
-	    value: function _initStyle() {
+	    key: '_init',
+	    value: function _init() {
+	      // initialize DOM style
+	      if (this.isInitialized || this.filter() == false) {
+	        return;
+	      }
 	      var $sections = document.querySelectorAll(this.sectionsSelector);
 	      var $bodies = document.querySelectorAll(this.bodiesSelector);
 	      for (var i = 0, l = $sections.length; i < l; i++) {
 	        var $section = $sections[i];
+	        var $body = $bodies[i];
 	        $section.style.position = 'relative';
 	        $section.style.overflow = 'hidden';
-	      }
-	      for (var _i = 0, _l = $bodies.length; _i < _l; _i++) {
-	        var $body = $bodies[_i];
 	        $body.style.position = 'absolute';
 	        $body.style.width = '100%';
 	        $body.style.left = '-150%';
@@ -130,6 +126,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      this.$sections = $sections;
 	      this.$bodies = $bodies;
+	      this.isInitialized = true;
+	    }
+	  }, {
+	    key: '_reset',
+	    value: function _reset() {
+	      // reset DOM style
+	      var $sections = this.$sections || document.querySelectorAll(this.sectionsSelector);
+	      var $bodies = this.$bodies || document.querySelectorAll(this.bodiesSelector);
+	      var $headers = this.$headers || document.querySelectorAll(this.headersSelector);
+	      for (var i = 0, l = $sections.length; i < l; i++) {
+	        var $section = $sections[i];
+	        var $body = $bodies[i];
+	        $section.style.position = '';
+	        $section.style.overflow = '';
+	        $body.style.position = '';
+	        $body.style.width = '';
+	        $body.style.height = '';
+	        $body.style.left = '';
+	        $body.style.transition = '';
+	        if (this.clickListeners[i] && $headers[i]) {
+	          $headers[i].removeEventListener('click', this.clickListeners[i], false);
+	        }
+	      }
+	      this.isInitialized = false;
 	    }
 	  }, {
 	    key: '_update',
@@ -137,42 +157,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this = this;
 
 	      if (this.clickListeners[0] && this.currentWidth === window.innerWidth) {
+	        // return if window width doesn't change
 	        return;
 	      }
 	      this.currentWidth = window.innerWidth;
 
-	      if (!this.filter()) {
+	      if (this.filter() == false) {
+	        // return if disable condition
 	        if (this.clickListeners[0]) {
-	          var $bodies = document.querySelectorAll(this.bodiesSelector);
-	          var $headers = document.querySelectorAll(this.headersSelector);
-	          for (var i = 0, l = $bodies.length; i < l; i++) {
-	            $bodies[i].style.height = '';
-	            $bodies[i].style.position = '';
-	            $bodies[i].style.left = '';
-	            $headers[i].removeEventListener('click', this.clickListeners[i], false);
-	          }
-	          this.$bodies = $bodies;
-	          this.$headers = $headers;
+	          // Change from enable condition to disable condition, reset DOM
+	          this._reset();
 	        }
 	        return;
 	      }
+
+	      this._init();
 
 	      var $sections = document.querySelectorAll(this.sectionsSelector);
 	      if ($sections[0]) {
 	        (function () {
 	          var $bodies = document.querySelectorAll(_this.bodiesSelector);
 	          var $headers = document.querySelectorAll(_this.headersSelector);
-	          for (var _i2 = 0, _l2 = $sections.length; _i2 < _l2; _i2++) {
-	            var $section = $sections[_i2];
-	            var $header = $headers[_i2];
-	            var $body = $bodies[_i2];
+	          for (var i = 0, l = $sections.length; i < l; i++) {
+	            var $section = $sections[i];
+	            var $header = $headers[i];
+	            var $body = $bodies[i];
 	            $body.style.height = '';
 	            $body.style.position = '';
 	            $body.style.left = '';
-	            if (_this.clickListeners[_i2]) {
-	              $header.removeEventListener('click', _this.clickListeners[_i2], false);
+	            if (_this.clickListeners[i]) {
+	              $header.removeEventListener('click', _this.clickListeners[i], false);
 	            }
-	            _this.clickListeners[_i2] = function (e) {
+	            _this.clickListeners[i] = function (e) {
 	              var el = e.currentTarget;
 	              var key = +el.dataset.key;
 	              if (parseInt($bodies[key].style.height, 10) == 0) {
@@ -183,15 +199,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                $sections[key].classList.remove(_this.openClassName);
 	              }
 	            };
-	            _this.clickListeners[_i2] = _this.clickListeners[_i2].bind(_this);
+	            _this.clickListeners[i] = _this.clickListeners[i].bind(_this);
 
-	            $header.dataset.key = _i2;
+	            $header.dataset.key = i;
 	            $header.dataset.targetHeight = $body.clientHeight ? $body.clientHeight : 0;
 	            $body.style.height = 0;
 	            $body.style.position = 'static';
 	            $body.style.left = 0;
 	            $section.classList.remove(_this.openClassName);
-	            $header.addEventListener('click', _this.clickListeners[_i2], false);
+	            $header.addEventListener('click', _this.clickListeners[i], false);
 	          }
 
 	          _this.$sections = $sections;

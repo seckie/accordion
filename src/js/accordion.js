@@ -21,30 +21,28 @@ class Accordion {
     this.clickListeners = [];
     this.currentWidth = window.innerWidth;
     // exec
-    this._initStyle();
+    this._init();
     window.addEventListener('resize', this.resizeHandler, false);
     setTimeout(this._update.bind(this), 50);
   }
 
   destroy () {
+    this._reset();
     window.removeEventListener('resize', this.resizeHandler, false);
-    if (typeof this.$headers === 'object' && this.$headers.length) {
-      for (let i=0,l=this.$headers.length; i<l; i++) {
-        this.$headers[i].removeEventListener('click', this.clickListeners[i], false);
-      }
-    }
   }
 
-  _initStyle () {
+  _init () {
+    // initialize DOM style
+    if (this.isInitialized || this.filter() == false) {
+      return;
+    }
     const $sections = document.querySelectorAll(this.sectionsSelector);
     const $bodies = document.querySelectorAll(this.bodiesSelector);
     for (let i=0, l=$sections.length; i<l; i++) {
       const $section = $sections[i];
+      const $body = $bodies[i];
       $section.style.position = 'relative';
       $section.style.overflow = 'hidden';
-    }
-    for (let i=0, l=$bodies.length; i<l; i++) {
-      const $body = $bodies[i];
       $body.style.position = 'absolute';
       $body.style.width = '100%';
       $body.style.left = '-150%';
@@ -52,29 +50,48 @@ class Accordion {
     }
     this.$sections = $sections;
     this.$bodies = $bodies;
+    this.isInitialized = true;
+  }
+
+  _reset () {
+    // reset DOM style
+    const $sections = this.$sections || document.querySelectorAll(this.sectionsSelector);
+    const $bodies = this.$bodies || document.querySelectorAll(this.bodiesSelector);
+    const $headers = this.$headers || document.querySelectorAll(this.headersSelector);
+    for (let i=0, l=$sections.length; i<l; i++) {
+      const $section = $sections[i];
+      const $body = $bodies[i];
+      $section.style.position = '';
+      $section.style.overflow = '';
+      $body.style.position = '';
+      $body.style.width = '';
+      $body.style.height = '';
+      $body.style.left = '';
+      $body.style.transition = '';
+      if (this.clickListeners[i] && $headers[i]) {
+        $headers[i].removeEventListener('click', this.clickListeners[i], false);
+      }
+    }
+    this.isInitialized = false;
   }
 
   _update () {
     if (this.clickListeners[0] && this.currentWidth === window.innerWidth) {
+      // return if window width doesn't change
       return;
     }
     this.currentWidth = window.innerWidth;
 
-    if (!this.filter()) {
+    if (this.filter() == false) {
+      // return if disable condition
       if (this.clickListeners[0]) {
-        const $bodies = document.querySelectorAll(this.bodiesSelector);
-        const $headers = document.querySelectorAll(this.headersSelector);
-        for (let i=0, l=$bodies.length; i<l; i++) {
-          $bodies[i].style.height = '';
-          $bodies[i].style.position = '';
-          $bodies[i].style.left = '';
-          $headers[i].removeEventListener('click', this.clickListeners[i], false);
-        }
-        this.$bodies = $bodies;
-        this.$headers = $headers;
+        // Change from enable condition to disable condition, reset DOM
+        this._reset();
       }
       return;
     }
+
+    this._init();
 
     const $sections = document.querySelectorAll(this.sectionsSelector);
     if ($sections[0]) {
